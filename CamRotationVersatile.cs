@@ -119,9 +119,6 @@ public class CamRotationVersatile : MonoBehaviour
             SOS_freqCount = (int)float.Parse(ParamsList[14]);
             Random_Direction = (int)float.Parse(ParamsList[15]);
             dtVR = Time.fixedDeltaTime;  //Time resolution (time per frame) measured for VR device with FixedUpdate() method
-
-            UnityEngine.Debug.Log("T_total = " + T_total);
-
         }
         else
         {
@@ -172,6 +169,7 @@ public class CamRotationVersatile : MonoBehaviour
                     T_total = 242 * PRTS_dt * NumPulses;
                     PosArray = InputFunctions.PRTS_offline(NumPulses, PRTS_dt, Vel_max, SceneName, out T_total, dtVR).ToArray();
                     P2P_Amp = P2P_Amp_calc;
+                    UnityEngine.Debug.Log(logFileName + " PRTS_dt = " + PRTS_dt + " Seconds");
                     break;
                 }
             case 3: // ***************************  2: TrapZ  ******************************** 
@@ -186,6 +184,7 @@ public class CamRotationVersatile : MonoBehaviour
                     logFileName = "TrapV";                    
                     PosArray = InputFunctions.TrapV_offline(NumPulses, minDeltaSec, TrapV_ta, TrapV_tv, TrapV_tx, Vel_max, SceneName, out T_total, dtVR).ToArray();
                     P2P_Amp_calc = Vel_max * (TrapV_ta + TrapV_tv);
+                    UnityEngine.Debug.Log( " TrapV Times: ta = " + TrapV_ta + " t_v = " + TrapV_tv + " t_x = " + TrapV_tx);
                     break;
                 }
             case 5: // *************************  5: SumOfSin  *******************************
@@ -211,9 +210,8 @@ public class CamRotationVersatile : MonoBehaviour
 
         UnityEngine.Debug.Log(logFileName + " P2P_Amp_calc = " + P2P_Amp_calc + " Degrees");
         UnityEngine.Debug.Log(logFileName + " Vel_max = " + Vel_max + " dps");
-        UnityEngine.Debug.Log(logFileName + " Time Final = " + Time_F + " Seconds");
-        UnityEngine.Debug.Log(logFileName + " Vel_max = " + Vel_max + " dps");
-        UnityEngine.Debug.Log(logFileName + " PRRS_dt = " + PRTS_dt + " Seconds");
+        UnityEngine.Debug.Log(logFileName + " Time Total = " + T_total + " Seconds");
+        
 
         // *******************   Write to file   *******************
         dt = DateTime.Now;
