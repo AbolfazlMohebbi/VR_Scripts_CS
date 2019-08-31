@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine.SceneManagement;
 using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public class CamRotationVersatile : MonoBehaviour
 {
@@ -83,7 +84,7 @@ public class CamRotationVersatile : MonoBehaviour
 
         // *******************************    EXPERIMENTS SETUP   *****************************
 
-        bool bVRgui = false;
+        bool bVRgui = true;
         if (bVRgui)
         {
             //Load the GUI and wait until its finished
@@ -159,7 +160,7 @@ public class CamRotationVersatile : MonoBehaviour
                     RS_RotationVelocity = Mathf.PI;    // A.Sin(wt) w = Rad per second;  default = pi / 2
                     frequency = RS_RotationVelocity / (2 * Mathf.PI);      //v = w/2pi   Hz
                     PosArray = InputFunctions.HalfSin_offline(NumPulses, P2P_Amp, RS_RotationVelocity, minDeltaSec, SceneName, out T_total, dtVR).ToArray();
-                    P2P_Amp = P2P_Amp_calc;
+                    P2P_Amp_calc = P2P_Amp;
                     break;
                 }
             case 2: // ***************************  2: PRTS  ******************************** 
@@ -168,15 +169,15 @@ public class CamRotationVersatile : MonoBehaviour
                     Vel_max = P2P_Amp / (17.0f * PRTS_dt);
                     T_total = 242 * PRTS_dt * NumPulses;
                     PosArray = InputFunctions.PRTS_offline(NumPulses, PRTS_dt, Vel_max, SceneName, out T_total, dtVR).ToArray();
-                    P2P_Amp = P2P_Amp_calc;
-                    UnityEngine.Debug.Log(logFileName + " PRTS_dt = " + PRTS_dt + " Seconds");
+                    P2P_Amp_calc = P2P_Amp;
+                    Debug.Log(logFileName + " PRTS_dt = " + PRTS_dt + " Seconds");
                     break;
                 }
             case 3: // ***************************  2: TrapZ  ******************************** 
                 {
                     logFileName = "TrapZ";
                     PosArray = InputFunctions.TrapZ_offline(NumPulses, P2P_Amp, Vel_max, minDeltaSec, minWSec, SceneName, out T_total, dtVR).ToArray();
-                    P2P_Amp = P2P_Amp_calc;
+                    P2P_Amp_calc = P2P_Amp;
                     break;
                 }
             case 4: // *************************   4: TrapV   ********************************
@@ -184,14 +185,14 @@ public class CamRotationVersatile : MonoBehaviour
                     logFileName = "TrapV";                    
                     PosArray = InputFunctions.TrapV_offline(NumPulses, minDeltaSec, TrapV_ta, TrapV_tv, TrapV_tx, Vel_max, SceneName, out T_total, dtVR).ToArray();
                     P2P_Amp_calc = Vel_max * (TrapV_ta + TrapV_tv);
-                    UnityEngine.Debug.Log( " TrapV Times: ta = " + TrapV_ta + " t_v = " + TrapV_tv + " t_x = " + TrapV_tx);
+                    Debug.Log( " TrapV Times: ta = " + TrapV_ta + " t_v = " + TrapV_tv + " t_x = " + TrapV_tx);
                     break;
                 }
             case 5: // *************************  5: SumOfSin  *******************************
                 {
                     logFileName = "SumOfSin";
                     PosArray = InputFunctions.SumOfSin_offline(NumPulses, P2P_Amp, SOS_minFreq, SOS_maxFreq, SOS_freqCount, SceneName, out T_total, dtVR).ToArray();
-                    P2P_Amp = P2P_Amp_calc;
+                    P2P_Amp_calc = P2P_Amp;
                     break;
                 }
             case 6: // *************************  5: PRBS  *******************************
@@ -199,7 +200,7 @@ public class CamRotationVersatile : MonoBehaviour
                     logFileName = "PRBS";
                     T_total = 40.0f; //seconds
                     PosArray = InputFunctions.PRBS_offline(P2P_Amp, 0.5f, T_total, SceneName, dtVR).ToArray();
-                    P2P_Amp = P2P_Amp_calc;
+                    P2P_Amp_calc = P2P_Amp;
                     break;
                 }
         }
@@ -208,9 +209,9 @@ public class CamRotationVersatile : MonoBehaviour
         Pos_max = PosArray.Max();
         Pos_min = PosArray.Min();
 
-        UnityEngine.Debug.Log(logFileName + " P2P_Amp_calc = " + P2P_Amp_calc + " Degrees");
-        UnityEngine.Debug.Log(logFileName + " Vel_max = " + Vel_max + " dps");
-        UnityEngine.Debug.Log(logFileName + " Time Total = " + T_total + " Seconds");
+        Debug.Log(logFileName + " P2P_Amp_calc = " + P2P_Amp_calc + " Degrees");
+        Debug.Log(logFileName + " Vel_max = " + Vel_max + " dps");
+        Debug.Log(logFileName + " Time Total = " + T_total + " Seconds");
         
 
         // *******************   Write to file   *******************
@@ -260,7 +261,7 @@ public class CamRotationVersatile : MonoBehaviour
         }
         else if (Time.time > Time_F)
         {
-            UnityEngine.Debug.Log("VR Input Finished!!!");
+            Debug.Log("VR Input Finished!!!");
             MCCDAQwrap.writeVolts(1, 2.5f);
         }
     }
